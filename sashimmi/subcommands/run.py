@@ -36,8 +36,8 @@ class RunSubcommand(SubcommandBaseWithWorkspace):
             )
         target = targets[0]
 
-        command_line = target.command_line_arguments() + args.arguments
-        if not command_line:
+        arguments, variables = target.adapt()
+        if not arguments:
             raise ValueError(
                 "Target {reference} produces no command line".format(
                     reference=target.reference
@@ -45,9 +45,9 @@ class RunSubcommand(SubcommandBaseWithWorkspace):
             )
 
         environment = os.environ.copy()
-        environment.update(target.environment_variables())
+        environment.update(variables)
 
-        os.execvpe(command_line[0], command_line, environment)
+        os.execvpe(arguments[0], arguments, environment)
 
 
 register_subcommand(RunSubcommand())

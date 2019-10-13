@@ -1,3 +1,5 @@
+import shlex
+
 from ._internal import SubcommandBaseWithWorkspace, register_subcommand
 from ..models.reference import Reference
 
@@ -9,15 +11,16 @@ TARGET_TEMPLATE = """\
 
 
 def _print_target(target):
+    arguments, variables = target.adapt()
     environment_variables = [
         "{key}={value}".format(key=key, value=value)
-        for key, value in target.environment_variables().items()
+        for key, value in variables.items()
     ]
     print(
         TARGET_TEMPLATE.format(
             reference=target.reference,
             environment=" ".join(environment_variables),
-            command=" ".join(target.command_line_arguments()),
+            command=" ".join([shlex.quote(arg) for arg in arguments]),
         )
     )
 

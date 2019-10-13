@@ -1,5 +1,35 @@
-from ..component import CommandComponent, DockerComponent
+from ..actions import get_action_class
+from ..actions.arguments import ArgumentsAction
+from ..adapters.exec import ExecAdapter
 from .reference import Reference
+
+
+def _make_actions_from_yaml_node(yaml_node, target_reference):
+    actions = []
+    for action_yaml_node in yaml_node:
+        if "action" not in action_yaml_node:
+            raise KeyError(
+                "Action in target {target} is missing required attribute 'action'"
+                .format(target_reference)
+            )
+        action_class = get_action_class(action_yaml_node["action"])
+        actions.append(
+            action_class.make_from_yaml_node(
+                action_yaml_node, target_reference
+            )
+        )
+    return actions
+
+
+def _make_adapters(actions):
+    adapters = [ExecAdapter()]
+    for action in actions:
+        active_adapter = adapters[-1]
+        active_adapter.adapt(action)
+        next_adapter = action.adapter()
+        if next_adapter:
+            adapters.append(next_adapter)
+    return adapters
 
 
 class Target:
@@ -7,41 +37,35 @@ class Target:
     def make(package_reference, yaml_node):
         if "name" not in yaml_node:
             raise KeyError(
-                "Target in package {package} is missing required attriute 'name'"
+                "Target in package {package} is missing required attribute 'name'"
                 .format(package_reference)
             )
+        target_name = yaml_node["name"]
         target_reference = Reference(
-            package_reference.package_path, yaml_node["name"]
+            package_reference.package_path,
+            target_name,
         )
 
-        components = []
-
-        if DockerComponent.yaml_key() in yaml_node:
-            components.append(
-                DockerComponent.make_from_yaml_node(
-                    yaml_node[DockerComponent.yaml_key()], target_reference
-                )
-            )
-
-        if CommandComponent.yaml_key() in yaml_node:
-            components.append(
-                CommandComponent.make_from_yaml_node(
-                    yaml_node[CommandComponent.yaml_key()], target_reference
-                )
-            )
-
-        if len(components) == 0:
+        if "actions" not in yaml_node:
             raise KeyError(
-                "Target {target} is missing components".
+                "Target {target} is missing required attribute 'actions'".
                 format(target_reference)
             )
+        if not yaml_node["actions"]:
+            raise KeyError(
+                "Target {target} is missing actions".format(target_reference)
+            )
+        actions = _make_actions_from_yaml_node(
+            yaml_node["actions"],
+            target_reference,
+        )
 
-        return Target(None, target_reference, components)
+        return Target(None, target_reference, actions)
 
-    def __init__(self, package, reference, components):
+    def __init__(self, package, reference, actions):
         self.package = package
         self.reference = reference
-        self.components = components
+        self.actions = actions
 
     def __str__(self):
         return "Target({name})".format(name=self.name)
@@ -54,14 +78,16 @@ class Target:
     def workspace(self):
         return self.package.workspace
 
-    def command_line_arguments(self):
-        arguments = []
-        for component in self.components:
-            arguments += component.command_line_arguments()
-        return arguments
+    def adapt(self, arguments=[]):
+        adapters = _make_adapters(self.actions)
+        adapters.append(ArgumentsAction(arguments))
 
-    def environment_variables(self):
+        arguments = []
+        for adapter in adapters:
+            arguments += adapter.command_line_arguments()
+
         variables = {}
-        for component in self.components:
-            variables.update(component.environment_variables())
-        return variables
+        for adapter in adapters:
+            variables.update(adapter.environment_variables())
+
+        return arguments, variables
