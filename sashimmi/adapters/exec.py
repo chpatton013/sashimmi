@@ -1,18 +1,34 @@
-from ._internal import Adapter
+from ._internal import Adapter, substitute_list, substitute_dict
 
 
 class ExecAdapter(Adapter):
     def __init__(self):
         super(ExecAdapter, self).__init__()
 
-    def command_line_arguments(self):
+    def command_line_arguments(self, target, apply_substitutions=False):
         arguments = []
+        substitutions = {}
         for action in self.actions:
-            arguments += action.command_line_arguments()
+            substitutions = action.substitutions(substitutions)
+            arguments += substitute_list(
+                action.command_line_arguments(),
+                target,
+                substitutions,
+                apply_substitutions=apply_substitutions,
+            )
         return arguments
 
-    def environment_variables(self):
+    def environment_variables(self, target, apply_substitutions=False):
         variables = {}
+        substitutions = {}
         for action in self.actions:
-            variables.update(action.environment_variables())
+            substitutions = action.substitutions(substitutions)
+            variables.update(
+                substitute_dict(
+                    action.environment_variables(),
+                    target,
+                    substitutions,
+                    apply_substitutions=apply_substitutions,
+                )
+            )
         return variables

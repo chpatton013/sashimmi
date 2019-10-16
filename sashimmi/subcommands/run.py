@@ -28,7 +28,7 @@ class RunSubcommand(SubcommandBaseWithWorkspace):
                 format(argument=reference)
             )
 
-        targets = [target for target in workspace.find_targets(reference)]
+        targets = list(workspace.find_targets(reference))
         if len(targets) > 1:
             raise ValueError(
                 "Reference argument {argument} produces multiple targets".
@@ -36,7 +36,7 @@ class RunSubcommand(SubcommandBaseWithWorkspace):
             )
         target = targets[0]
 
-        arguments, variables = target.adapt()
+        arguments, variables = target.adapt(apply_substitutions=True)
         if not arguments:
             raise ValueError(
                 "Target {reference} produces no command line".format(

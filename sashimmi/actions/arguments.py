@@ -21,3 +21,6 @@ class ArgumentsAction(Action):
 
     def environment_variables(self):
         return {}
+
+    def substitutions(self, existing_substitutions):
+        return existing_substitutions

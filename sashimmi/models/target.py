@@ -78,16 +78,25 @@ class Target:
     def workspace(self):
         return self.package.workspace
 
-    def adapt(self, arguments=[]):
-        adapters = _make_adapters(self.actions)
-        adapters.append(ArgumentsAction(arguments))
+    def adapt(self, arguments=[], apply_substitutions=False):
+        adapters = list(
+            _make_adapters(self.actions + [ArgumentsAction(arguments)])
+        )
 
         arguments = []
         for adapter in adapters:
-            arguments += adapter.command_line_arguments()
+            arguments += adapter.command_line_arguments(
+                self,
+                apply_substitutions=apply_substitutions,
+            )
 
         variables = {}
         for adapter in adapters:
-            variables.update(adapter.environment_variables())
+            variables.update(
+                adapter.environment_variables(
+                    self,
+                    apply_substitutions=apply_substitutions,
+                )
+            )
 
         return arguments, variables

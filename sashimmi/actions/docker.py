@@ -41,5 +41,8 @@ class DockerAction(Action):
     def environment_variables(self):
         return {}
 
+    def substitutions(self, existing_substitutions):
+        return {}
+
 
 register_action_class(DockerAction)

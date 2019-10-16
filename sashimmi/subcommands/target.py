@@ -11,7 +11,7 @@ TARGET_TEMPLATE = """\
 
 
 def _print_target(target):
-    arguments, variables = target.adapt()
+    arguments, variables = target.adapt(apply_substitutions=False)
     environment_variables = [
         "{key}={value}".format(key=key, value=value)
         for key, value in variables.items()

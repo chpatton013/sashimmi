@@ -33,3 +33,7 @@ class Action(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def environment_variables(self):
         pass
+
+    @abc.abstractmethod
+    def substitutions(self, existing_substitutions):
+        pass

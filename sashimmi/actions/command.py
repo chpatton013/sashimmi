@@ -1,6 +1,14 @@
 from ._internal import Action, register_action_class
 
 
+def _substitute_workspace(target):
+    return target.workspace.root
+
+
+def _substitute_package(target):
+    return target.package.absolute_path
+
+
 class CommandAction(Action):
     @staticmethod
     def name():
@@ -32,6 +40,18 @@ class CommandAction(Action):
 
     def environment_variables(self):
         return self.variables
+
+    def substitutions(self, existing_substitutions):
+        new_substitutions = existing_substitutions.copy()
+        new_substitutions.update({
+            "workspace": _substitute_workspace,
+            "wks": _substitute_workspace,
+            "w": _substitute_workspace,
+            "package": _substitute_package,
+            "pkg": _substitute_package,
+            "p": _substitute_package,
+        })
+        return new_substitutions
 
 
 register_action_class(CommandAction)
