@@ -48,14 +48,6 @@ def ensure_root_node(root):
     pathlib.Path(root_node(root)).mkdir(exist_ok=True)
 
 
-def ensure_bin_node(root):
-    pathlib.Path(bin_node(root)).mkdir(exist_ok=True)
-
-
-def ensure_shims_node(root):
-    pathlib.Path(shims_node(root)).touch()
-
-
 class SubcommandBase(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def name():
@@ -81,3 +73,16 @@ class SubcommandBaseWithWorkspace(SubcommandBase, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def run(self, args, workspace):
         pass
+
+
+def _ensure_bin_node(root):
+    pathlib.Path(bin_node(root)).mkdir(exist_ok=True)
+
+
+def _ensure_shims_node(root):
+    pathlib.Path(shims_node(root)).touch()
+
+
+def ensure_workspace(root):
+    _ensure_bin_node(root)
+    _ensure_shims_node(root)

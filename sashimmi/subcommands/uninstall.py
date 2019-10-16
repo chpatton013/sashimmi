@@ -1,11 +1,6 @@
 import logging
 
-from ._internal import (
-    SubcommandBaseWithWorkspace,
-    register_subcommand,
-    ensure_bin_node,
-    ensure_shims_node,
-)
+from ._internal import SubcommandBaseWithWorkspace, register_subcommand
 from ..models.reference import Reference
 from ..models.shim import read_shims_node, write_shims_node, bind_shims
 
@@ -44,9 +39,6 @@ class UninstallSubcommand(SubcommandBaseWithWorkspace):
             Reference.make(reference, workspace.root)
             for reference in args.references
         ]
-
-        ensure_bin_node(workspace.root)
-        ensure_shims_node(workspace.root)
 
         shims = read_shims_node(workspace.root)
         for reference in references:

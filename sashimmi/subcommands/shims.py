@@ -1,9 +1,4 @@
-from ._internal import (
-    SubcommandBaseWithWorkspace,
-    register_subcommand,
-    ensure_bin_node,
-    ensure_shims_node,
-)
+from ._internal import SubcommandBaseWithWorkspace, register_subcommand
 from ..models.shim import read_shims_node
 
 
@@ -22,9 +17,6 @@ class ShimsSubcommand(SubcommandBaseWithWorkspace):
         pass
 
     def run(self, args, workspace):
-        ensure_bin_node(workspace.root)
-        ensure_shims_node(workspace.root)
-
         shims = read_shims_node(workspace.root)
         if shims:
             print("Shims")

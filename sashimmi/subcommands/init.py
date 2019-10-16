@@ -4,8 +4,7 @@ from ._internal import (
     SubcommandBase,
     register_subcommand,
     ensure_root_node,
-    ensure_bin_node,
-    ensure_shims_node,
+    ensure_workspace,
     find_root_directory,
 )
 from ..constants import root_node
@@ -40,8 +39,7 @@ class InitSubcommand(SubcommandBase):
                 )
 
         ensure_root_node(args.root)
-        ensure_bin_node(args.root)
-        ensure_shims_node(args.root)
+        ensure_workspace(args.root)
         write_shims_node(args.root, {})
         bind_shims(args.root, {})
         logging.info(
