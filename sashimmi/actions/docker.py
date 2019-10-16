@@ -1,4 +1,4 @@
-from ._internal import Action, register_action_class
+from .action import Action, register_action_class
 from ..adapters.shell import ShellAdapter
 
 

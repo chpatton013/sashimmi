@@ -1,6 +1,6 @@
 import os
 
-from ._internal import SubcommandBaseWithWorkspace, register_subcommand
+from .subcommand import SubcommandBaseWithWorkspace, register_subcommand
 from ..models.reference import Reference
 
 

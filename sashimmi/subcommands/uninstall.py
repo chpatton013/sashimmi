@@ -1,6 +1,6 @@
 import logging
 
-from ._internal import SubcommandBaseWithWorkspace, register_subcommand
+from .subcommand import SubcommandBaseWithWorkspace, register_subcommand
 from ..models.reference import Reference
 from ..models.shim import read_shims_node, write_shims_node, bind_shims
 

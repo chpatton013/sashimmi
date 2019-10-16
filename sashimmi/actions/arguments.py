@@ -1,4 +1,4 @@
-from ._internal import Action
+from .action import Action
 
 
 class ArgumentsAction(Action):

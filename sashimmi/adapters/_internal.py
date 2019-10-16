@@ -1,4 +1,3 @@
-import abc
 import re
 
 from ..constants import TARGET_SUBSTITUTION_TOKEN
@@ -53,19 +52,3 @@ def substitute_dict(mapping, target, substitutions, apply_substitutions=True):
         )
         for key, value in mapping.items()
     }
-
-
-class Adapter(metaclass=abc.ABCMeta):
-    def __init__(self):
-        self.actions = []
-
-    def adapt(self, action):
-        self.actions.append(action)
-
-    @abc.abstractmethod
-    def command_line_arguments(self, target, apply_substitutions=False):
-        pass
-
-    @abc.abstractmethod
-    def environment_variables(self, target, apply_substitutions=False):
-        pass

@@ -1,4 +1,4 @@
-from ._internal import SubcommandBaseWithWorkspace, register_subcommand
+from .subcommand import SubcommandBaseWithWorkspace, register_subcommand
 
 
 class WorkspaceSubcommand(SubcommandBaseWithWorkspace):

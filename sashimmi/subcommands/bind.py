@@ -1,4 +1,4 @@
-from ._internal import SubcommandBaseWithWorkspace, register_subcommand
+from .subcommand import SubcommandBaseWithWorkspace, register_subcommand
 from ..models.shim import read_shims_node, bind_shims
 
 

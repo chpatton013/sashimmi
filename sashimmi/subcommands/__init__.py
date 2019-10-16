@@ -9,4 +9,4 @@ from .target import TargetSubcommand
 from .uninstall import UninstallSubcommand
 from .workspace import WorkspaceSubcommand
 
-from ._internal import get_subcommand, get_subcommands
+from .subcommand import get_subcommand, get_subcommands

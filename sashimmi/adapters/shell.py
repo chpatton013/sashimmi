@@ -1,4 +1,5 @@
-from ._internal import Adapter, substitute_list, substitute_dict
+from ._internal import substitute_list, substitute_dict
+from .adapter import Adapter
 
 
 class ShellAdapter(Adapter):

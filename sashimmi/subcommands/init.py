@@ -1,12 +1,7 @@
 import logging
 
-from ._internal import (
-    SubcommandBase,
-    register_subcommand,
-    ensure_root_node,
-    ensure_workspace,
-    find_root_directory,
-)
+from ._internal import ensure_root_node, ensure_workspace, find_root_directory
+from .subcommand import SubcommandBase, register_subcommand
 from ..constants import root_node
 from ..models.shim import write_shims_node, bind_shims
 
