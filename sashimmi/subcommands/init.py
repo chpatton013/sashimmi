@@ -36,7 +36,7 @@ class InitSubcommand(SubcommandBase):
         ensure_root_node(args.root)
         ensure_workspace(args.root)
         write_shims_node(args.root, {})
-        bind_shims(args.root, {}, False)
+        bind_shims(args.root, {}, None)
         logging.info(
             "Initialized new sashimmi workspace in %s", root_node(args.root)
         )

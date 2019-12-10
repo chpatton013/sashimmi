@@ -1,7 +1,7 @@
-from .subcommand import SubcommandBaseWithWorkspace, register_subcommand
+from .subcommand import SubcommandBaseWithWorkspaceReadLock, register_subcommand
 
 
-class WorkspaceSubcommand(SubcommandBaseWithWorkspace):
+class WorkspaceSubcommand(SubcommandBaseWithWorkspaceReadLock):
     def name(self):
         return "workspace"
 
@@ -11,7 +11,7 @@ class WorkspaceSubcommand(SubcommandBaseWithWorkspace):
     def configure_subparser(self, subparser):
         pass
 
-    def run(self, args, workspace):
+    def run_with_lock(self, args, workspace, lock):
         packages = workspace.packages.keys()
         if packages:
             print("Packages")

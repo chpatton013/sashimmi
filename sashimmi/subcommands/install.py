@@ -1,11 +1,11 @@
 import logging
 
-from .subcommand import SubcommandBaseWithWorkspace, register_subcommand
+from .subcommand import SubcommandBaseWithWorkspaceWriteLock, register_subcommand
 from ..models.reference import Reference
 from ..models.shim import Shim, read_shims_node, write_shims_node, bind_shims
 
 
-class InstallSubcommand(SubcommandBaseWithWorkspace):
+class InstallSubcommand(SubcommandBaseWithWorkspaceWriteLock):
     def name(self):
         return "install"
 
@@ -33,7 +33,7 @@ class InstallSubcommand(SubcommandBaseWithWorkspace):
             help="Bind shims in multi-namespace."
         )
 
-    def run(self, args, workspace):
+    def run_with_lock(self, args, workspace, lock):
         target_references = [
             Reference.make(reference, workspace.root)
             for reference in args.references
@@ -65,7 +65,10 @@ class InstallSubcommand(SubcommandBaseWithWorkspace):
                 shims[name] = Shim(name, target.reference)
 
         write_shims_node(workspace.root, shims)
-        bind_shims(workspace.root, shims, args.multi)
+        bind_shims(
+            workspace.root, shims,
+            self.make_multi_lock() if args.multi else None
+        )
 
 
 register_subcommand(InstallSubcommand())

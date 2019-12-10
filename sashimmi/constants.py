@@ -4,6 +4,7 @@ SASHIMMI_ROOT_NODE = ".sashimmi"
 SASHIMMI_BIN_NODE = "bin"
 SASHIMMI_SHIMS_NODE = "shims.yaml"
 SASHIMMI_PACKAGE_NODE = ".sashimmi.yaml"
+SASHIMMI_LOCK_NODE = "lock"
 
 _DEFAULT_SASHIMMI_MULTI_ROOT_NODE = os.path.join(
     os.environ.get("XDG_DATA_HOME", os.path.expanduser("~/.local/share")),
@@ -14,6 +15,7 @@ SASHIMMI_MULTI_ROOT_NODE = os.environ.get(
 )
 SASHIMMI_MULTI_BIN_NODE = "bin"
 SASHIMMI_MULTI_SHIMS_NODE = "shims"
+SASHIMMI_MULTI_LOCK_NODE = "lock"
 
 ROOT_ANCHOR_TOKEN = "//"
 REFERENCE_PATH_SEPARATOR_TOKEN = "/"
@@ -35,6 +37,10 @@ def shims_node(root):
     return os.path.join(root, SASHIMMI_ROOT_NODE, SASHIMMI_SHIMS_NODE)
 
 
+def lock_node(root):
+    return os.path.join(root, SASHIMMI_ROOT_NODE, SASHIMMI_LOCK_NODE)
+
+
 def multi_root_node():
     return SASHIMMI_MULTI_ROOT_NODE
 
@@ -49,3 +55,7 @@ def multi_shims_node():
 
 def multi_shim_node(name):
     return os.path.join(multi_shims_node(), name)
+
+
+def multi_lock_node():
+    return os.path.join(SASHIMMI_MULTI_ROOT_NODE, SASHIMMI_LOCK_NODE)

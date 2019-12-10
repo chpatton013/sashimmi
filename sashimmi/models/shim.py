@@ -2,6 +2,7 @@ import hashlib
 import os
 import pathlib
 import shutil
+import stat
 
 from ..constants import (
     root_node,
@@ -83,10 +84,10 @@ def write_shims_node(root, shims):
     open(shims_node(root), "w").write(content)
 
 
-def bind_shims(root, shims, bind_multi):
+def _bind_shims_with_lock(root, shims, multi_lock):
     bin_root = bin_node(root)
 
-    if bind_multi:
+    if multi_lock:
         _delete_all_multishim_files(bin_root)
     _delete_all_shim_files(bin_root)
 
@@ -96,9 +97,12 @@ def bind_shims(root, shims, bind_multi):
             handle.write(
                 SHIM_TEMPLATE.format(root=root, reference=shim.reference)
             )
-        os.chmod(shim_file, 0o775)
+        os.chmod(
+            shim_file,
+            stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH,
+        )
 
-        if bind_multi:
+        if multi_lock:
             multi_shim_root = multi_shim_node(shim.name)
             multi_shim_file = os.path.join(multi_shim_root, _sha256(root))
             multi_bin_file = os.path.join(multi_bin_node(), shim.name)
@@ -106,3 +110,11 @@ def bind_shims(root, shims, bind_multi):
             pathlib.Path(multi_shim_root).mkdir(exist_ok=True)
             os.symlink(shim_file, multi_shim_file)
             os.symlink(multi_shim_file, multi_bin_file)
+
+
+def bind_shims(root, shims, multi_lock):
+    if multi_lock:
+        with multi_lock as lock:
+            _bind_shims_with_lock(root, shims, multi_lock)
+    else:
+        _bind_shims_with_lock(root, shims, multi_lock)

@@ -1,4 +1,4 @@
-from .subcommand import SubcommandBaseWithWorkspace, register_subcommand
+from .subcommand import SubcommandBaseWithWorkspaceReadLock, register_subcommand
 from ..models.shim import read_shims_node
 
 
@@ -6,7 +6,7 @@ def _print_shim(name, reference):
     print("  {name}: {reference}".format(name=name, reference=reference))
 
 
-class ShimsSubcommand(SubcommandBaseWithWorkspace):
+class ShimsSubcommand(SubcommandBaseWithWorkspaceReadLock):
     def name(self):
         return "shims"
 
@@ -16,7 +16,7 @@ class ShimsSubcommand(SubcommandBaseWithWorkspace):
     def configure_subparser(self, subparser):
         pass
 
-    def run(self, args, workspace):
+    def run_with_lock(self, args, workspace, lock):
         shims = read_shims_node(workspace.root)
         if shims:
             print("Shims")

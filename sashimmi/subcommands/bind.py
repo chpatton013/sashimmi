@@ -1,8 +1,8 @@
-from .subcommand import SubcommandBaseWithWorkspace, register_subcommand
+from .subcommand import SubcommandBaseWithWorkspaceWriteLock, register_subcommand
 from ..models.shim import read_shims_node, bind_shims
 
 
-class BindSubcommand(SubcommandBaseWithWorkspace):
+class BindSubcommand(SubcommandBaseWithWorkspaceWriteLock):
     def name(self):
         return "bind"
 
@@ -17,9 +17,12 @@ class BindSubcommand(SubcommandBaseWithWorkspace):
             help="Bind shims in multi-namespace."
         )
 
-    def run(self, args, workspace):
+    def run_with_lock(self, args, workspace, lock):
         shims = read_shims_node(workspace.root)
-        bind_shims(workspace.root, shims, args.multi)
+        bind_shims(
+            workspace.root, shims,
+            self.make_multi_lock() if args.multi else None
+        )
 
 
 register_subcommand(BindSubcommand())

@@ -1,10 +1,10 @@
 import os
 
-from .subcommand import SubcommandBaseWithWorkspace, register_subcommand
+from .subcommand import SubcommandBaseWithWorkspaceReadLock, register_subcommand
 from ..models.reference import Reference
 
 
-class RunSubcommand(SubcommandBaseWithWorkspace):
+class RunSubcommand(SubcommandBaseWithWorkspaceReadLock):
     def name(self):
         return "run"
 
@@ -20,7 +20,7 @@ class RunSubcommand(SubcommandBaseWithWorkspace):
             "arguments", nargs="*", help="Arguments to pass to command"
         )
 
-    def run(self, args, workspace):
+    def run_with_lock(self, args, workspace, lock):
         reference = Reference.make(args.reference, workspace.root)
         if not reference.target_name:
             raise ValueError(

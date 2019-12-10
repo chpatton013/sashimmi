@@ -1,4 +1,4 @@
-from .subcommand import SubcommandBaseWithWorkspace, register_subcommand
+from .subcommand import SubcommandBaseWithWorkspaceReadLock, register_subcommand
 from ..models.reference import Reference
 
 
@@ -16,7 +16,7 @@ def _print_package(package):
         )
 
 
-class PackageSubcommand(SubcommandBaseWithWorkspace):
+class PackageSubcommand(SubcommandBaseWithWorkspaceReadLock):
     def name(self):
         return "package"
 
@@ -29,7 +29,7 @@ class PackageSubcommand(SubcommandBaseWithWorkspace):
             help="References of the packages within the workspace."
         )
 
-    def run(self, args, workspace):
+    def run_with_lock(self, args, workspace, lock):
         reference = Reference.make(args.reference, workspace.root)
         if reference.target_name:
             raise ValueError(

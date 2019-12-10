@@ -1,6 +1,6 @@
 import shlex
 
-from .subcommand import SubcommandBaseWithWorkspace, register_subcommand
+from .subcommand import SubcommandBaseWithWorkspaceReadLock, register_subcommand
 from ..models.reference import Reference
 
 TARGET_TEMPLATE = """\
@@ -25,7 +25,7 @@ def _print_target(target):
     )
 
 
-class TargetSubcommand(SubcommandBaseWithWorkspace):
+class TargetSubcommand(SubcommandBaseWithWorkspaceReadLock):
     def name(self):
         return "target"
 
@@ -39,7 +39,7 @@ class TargetSubcommand(SubcommandBaseWithWorkspace):
             help="References of the targets which map to commands."
         )
 
-    def run(self, args, workspace):
+    def run_with_lock(self, args, workspace, lock):
         references = [
             Reference.make(reference, workspace.root)
             for reference in args.references
