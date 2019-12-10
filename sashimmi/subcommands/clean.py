@@ -10,11 +10,16 @@ class CleanSubcommand(SubcommandBaseWithWorkspace):
         return "Uninstall all shims."
 
     def configure_subparser(self, subparser):
-        pass
+        subparser.add_argument(
+            "--multi",
+            action="store_true",
+            default=False,
+            help="Bind shims in multi-namespace."
+        )
 
     def run(self, args, workspace):
         write_shims_node(workspace.root, {})
-        bind_shims(workspace.root, {})
+        bind_shims(workspace.root, {}, args.multi)
 
 
 register_subcommand(CleanSubcommand())

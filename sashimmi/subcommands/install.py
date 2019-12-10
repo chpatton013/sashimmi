@@ -26,6 +26,12 @@ class InstallSubcommand(SubcommandBaseWithWorkspace):
             help=
             "Allow targets with conflicting names to override previously-installed shims."
         )
+        subparser.add_argument(
+            "--multi",
+            action="store_true",
+            default=False,
+            help="Bind shims in multi-namespace."
+        )
 
     def run(self, args, workspace):
         target_references = [
@@ -59,7 +65,7 @@ class InstallSubcommand(SubcommandBaseWithWorkspace):
                 shims[name] = Shim(name, target.reference)
 
         write_shims_node(workspace.root, shims)
-        bind_shims(workspace.root, shims)
+        bind_shims(workspace.root, shims, args.multi)
 
 
 register_subcommand(InstallSubcommand())

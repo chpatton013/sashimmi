@@ -33,6 +33,12 @@ class UninstallSubcommand(SubcommandBaseWithWorkspace):
             nargs="+",
             help="References of the targets which map to commands."
         )
+        subparser.add_argument(
+            "--multi",
+            action="store_true",
+            default=False,
+            help="Bind shims in multi-namespace."
+        )
 
     def run(self, args, workspace):
         references = [
@@ -46,7 +52,7 @@ class UninstallSubcommand(SubcommandBaseWithWorkspace):
                 _uninstall_shim(target, shims)
 
         write_shims_node(workspace.root, shims)
-        bind_shims(workspace.root, shims)
+        bind_shims(workspace.root, shims, args.multi)
 
 
 register_subcommand(UninstallSubcommand())
